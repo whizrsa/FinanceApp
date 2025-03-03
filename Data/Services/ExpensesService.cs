@@ -1,5 +1,7 @@
 ﻿using FinanceApp.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace FinanceApp.Data.Services
 {
@@ -10,6 +12,7 @@ namespace FinanceApp.Data.Services
         {
             _context = context;
         }
+
         public async Task Add(Expense expense)
         {
            _context.Expenses.Add(expense);
@@ -21,6 +24,45 @@ namespace FinanceApp.Data.Services
             var expenses = await _context.Expenses.ToListAsync();
 
             return expenses;
+        }
+
+        public async Task<Expense> FindId(int? expenseId)
+        {
+            var expense = await _context.Expenses.FindAsync(expenseId);
+
+            if(expense == null)
+            {
+                return null;
+            }
+
+            return expense;
+        }
+
+        public async Task<Expense> Update(Expense expense)
+        {
+            var existingExpense = await _context.Expenses.FindAsync(expense.Id);
+            if (existingExpense == null)
+            {
+                return null;
+            }
+
+            _context.Entry(existingExpense).CurrentValues.SetValues(expense);
+            await _context.SaveChangesAsync();
+            return expense;
+        }
+
+        public async Task<Expense> Delete(Expense expense)
+        {
+            var existingExpense = await _context.Expenses.FindAsync(expense.Id);
+
+            if (existingExpense == null)
+            {
+                return null;
+            }
+
+            _context.Remove(existingExpense);
+            await _context.SaveChangesAsync();
+            return expense;
         }
 
         public IQueryable GetChartData()
