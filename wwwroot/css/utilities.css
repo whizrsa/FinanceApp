@@ -1,0 +1,472 @@
+/* Additional CSS Utilities for FinanceApp Customization */
+
+/* ========================================
+   CUSTOM ANIMATIONS
+   ======================================== */
+
+/* Slide In From Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+/* Slide In From Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+/* Scale Up */
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-up {
+  animation: scaleUp 0.4s ease-out;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Glassmorphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Text Gradients */
+.text-gradient-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+/* Background Gradients */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+}
+
+.bg-gradient-danger {
+  background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--light-bg);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Loading States */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Tooltip Styles */
+.tooltip-custom {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-custom .tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: var(--dark-text);
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.875rem;
+}
+
+.tooltip-custom:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Status Indicators */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.status-dot.active {
+  background-color: var(--success-color);
+  box-shadow: 0 0 10px var(--success-color);
+}
+
+.status-dot.inactive {
+  background-color: var(--gray-text);
+}
+
+.status-dot.warning {
+  background-color: var(--warning-color);
+  box-shadow: 0 0 10px var(--warning-color);
+}
+
+/* Dividers */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+  margin: 2rem 0;
+}
+
+.divider-vertical {
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--border-color), transparent);
+  height: 100%;
+}
+
+/* Floating Labels */
+.form-floating-custom {
+  position: relative;
+}
+
+.form-floating-custom input:focus ~ label,
+.form-floating-custom input:not(:placeholder-shown) ~ label {
+  transform: translateY(-1.5rem) scale(0.85);
+  color: var(--primary-color);
+}
+
+.form-floating-custom label {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  color: var(--gray-text);
+}
+
+/* Progress Bar */
+.progress-custom {
+  height: 8px;
+  background-color: var(--light-bg);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.progress-custom .progress-bar {
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  transition: width 0.6s ease;
+  height: 100%;
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--danger-color);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* Image Overlay */
+.image-overlay {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.image-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay:hover::after {
+  opacity: 1;
+}
+
+/* Ribbon */
+.ribbon {
+  position: absolute;
+  top: 10px;
+  right: -5px;
+  background: var(--danger-color);
+  color: white;
+  padding: 5px 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.ribbon::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid rgba(0,0,0,0.2);
+  border-bottom: 5px solid transparent;
+}
+
+/* Custom Checkbox */
+.custom-checkbox {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: var(--light-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox .checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked ~ .checkmark::after {
+  display: block;
+}
+
+/* Spacing Utilities */
+.mt-custom {
+  margin-top: 3rem !important;
+}
+
+.mb-custom {
+  margin-bottom: 3rem !important;
+}
+
+.pt-custom {
+  padding-top: 3rem !important;
+}
+
+.pb-custom {
+  padding-bottom: 3rem !important;
+}
+
+/* Border Utilities */
+.border-gradient {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Flex Utilities */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Text Utilities */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text-truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .page-container {
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+  
+  .btn {
+    display: none !important;
+  }
+}
+
+/* Dark Mode Preparation (for future implementation) */
+@media (prefers-color-scheme: dark) {
+  /* Uncomment when implementing dark mode
+  :root {
+    --light-bg: #1e293b;
+    --dark-text: #f8fafc;
+    --gray-text: #cbd5e1;
+    --border-color: #334155;
+  }
+  */
+}

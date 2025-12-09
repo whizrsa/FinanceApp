@@ -4,6 +4,7 @@ using FinanceApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace FinanceApp.Controllers
 {
@@ -14,6 +15,7 @@ namespace FinanceApp.Controllers
         {
             _expensesService = expensesService;
         }
+        
         public async Task<IActionResult> Index()
         {
             var expenses = await _expensesService.GetAll();
@@ -31,7 +33,7 @@ namespace FinanceApp.Controllers
             if (ModelState.IsValid)
             {
                 await _expensesService.Add(expense);
-
+                TempData["SuccessMessage"] = "Expense added successfully!";
                 return RedirectToAction("Index");
             }
 
@@ -41,7 +43,6 @@ namespace FinanceApp.Controllers
         public IActionResult GetChart()
         {
             var data = _expensesService.GetChartData();
-
             return Json(data);
         }
 
@@ -65,14 +66,13 @@ namespace FinanceApp.Controllers
                 return NotFound();
             }
 
-            return View(expense); // ensuring the view gets an expense with a valid Id
+            return View(expense);
         }
-
 
         [HttpPost]
         public async Task<ActionResult> Edit(Expense expense) 
         {
-            if (expense == null || expense.Id == 0) // Checking if Id is missing
+            if (expense == null || expense.Id == 0)
             {
                 return BadRequest("Invalid expense data");
             }
@@ -86,7 +86,7 @@ namespace FinanceApp.Controllers
             if (ModelState.IsValid)
             {
                 await _expensesService.Update(expense);
-                TempData["SuccessMsg"] = "Expense (" + expense.Description + ") updated successfully.";
+                TempData["SuccessMessage"] = "Expense updated successfully!";
                 return RedirectToAction("Manage");
             }
 
@@ -107,13 +107,13 @@ namespace FinanceApp.Controllers
                 return NotFound();
             }
 
-            return View(expense); // This ensures the view gets an expense with a valid Id
+            return View(expense);
         }
 
         [HttpPost]
         public async Task<ActionResult> Delete(Expense expense)
         {
-            if (expense == null || expense.Id == 0) // Id exists or not
+            if (expense == null || expense.Id == 0)
             {
                 return BadRequest("Invalid expense data");
             }
@@ -128,11 +128,27 @@ namespace FinanceApp.Controllers
             if (ModelState.IsValid)
             {
                 await _expensesService.Delete(expense);
+                TempData["SuccessMessage"] = "Expense deleted successfully!";
                 return RedirectToAction("Manage");
             }
 
             return View(expense);
         }
 
+        // Export expenses to CSV
+        public async Task<IActionResult> ExportCsv()
+        {
+            var expenses = await _expensesService.GetAll();
+            var csv = new StringBuilder();
+            
+            csv.AppendLine("Description,Amount,Category,Date");
+            
+            foreach (var expense in expenses)
+            {
+                csv.AppendLine($"\"{expense.Description}\",{expense.Amount},\"{expense.Category}\",{expense.Date:yyyy-MM-dd}");
+            }
+
+            return File(Encoding.UTF8.GetBytes(csv.ToString()), "text/csv", $"expenses_{DateTime.Now:yyyyMMdd}.csv");
+        }
     }
 }

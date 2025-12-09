@@ -1,35 +1,221 @@
 ﻿@model IEnumerable<FinanceApp.Models.Expense>
 
+@{
+    ViewData["Title"] = "Manage Expenses";
+}
 
-<h2 class=" container">Manage Expense</h2>
-<div class="container">
-    <table class="table table-bordered"> 
-        <thead class="table-light">
-            <tr>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var item in Model)
-            {
-                <tr>
-                    <td>@item.Description</td>
-                    <td>@item.Amount</td>
-                    <td>@item.Category</td>
-                    <td>@item.Date.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <a asp-controller="Expenses" asp-action="Edit" class="btn btn-primary" asp-route-expenseId="@item.Id">Edit</a>
-                    </td>
-                    <td>
-                        <a asp-controller="Expenses" asp-action="Delete" class="btn btn-danger" asp-route-expenseId="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="page-container fade-in">
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="page-header">
+        <h2><i class="bi bi-gear"></i> Manage Expenses</h2>
+        <div>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add New
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-house"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Search</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by description...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Category</label>
+                <select id="categoryFilter" class="form-select">
+                    <option value="">All Categories</option>
+                    @foreach(var category in Model.Select(e => e.Category).Distinct().OrderBy(c => c))
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Sort By</label>
+                <select id="sortBy" class="form-select">
+                    <option value="date-desc">Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="amount-desc">Highest</option>
+                    <option value="amount-asc">Lowest</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button id="resetFilters" class="btn btn-warning w-100">
+                    <i class="bi bi-arrow-clockwise"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table" id="expensesTable">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-card-text"></i> Description</th>
+                        <th><i class="bi bi-currency-dollar"></i> Amount</th>
+                        <th><i class="bi bi-tag"></i> Category</th>
+                        <th><i class="bi bi-calendar"></i> Date</th>
+                        <th class="text-center"><i class="bi bi-tools"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expensesTableBody">
+                    @foreach(var item in Model.OrderByDescending(e => e.Date))
+                    {
+                        <tr data-description="@item.Description.ToLower()" 
+                            data-category="@item.Category" 
+                            data-amount="@item.Amount" 
+                            data-date="@item.Date.ToString("yyyy-MM-dd")">
+                            <td><strong>@item.Description</strong></td>
+                            <td><span class="badge bg-primary">$@item.Amount.ToString("N2")</span></td>
+                            <td><span class="category-badge" style="background-color: @GetCategoryColor(item.Category); color: white;">@item.Category</span></td>
+                            <td>@item.Date.ToString("MMM dd, yyyy")</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a asp-controller="Expenses" 
+                                       asp-action="Edit" 
+                                       asp-route-expenseId="@item.Id" 
+                                       class="btn btn-sm btn-primary"
+                                       title="Edit">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <a asp-controller="Expenses" 
+                                       asp-action="Delete" 
+                                       asp-route-expenseId="@item.Id" 
+                                       class="btn btn-sm btn-danger"
+                                       title="Delete">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="1"><strong>Total:</strong></td>
+                        <td><strong class="text-primary fs-5">$@Model.Sum(e => e.Amount).ToString("N2")</strong></td>
+                        <td colspan="3"><strong>@Model.Count() transactions</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No expenses to manage yet. <a asp-action="Create" class="alert-link">Add your first expense!</a>
+        </div>
+    }
 </div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <script>
+        // Search and Filter Functionality
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortBy = document.getElementById('sortBy');
+        const resetBtn = document.getElementById('resetFilters');
+        const tableBody = document.getElementById('expensesTableBody');
+
+        function filterAndSortTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            const sortOption = sortBy.value;
+
+            let rows = Array.from(tableBody.querySelectorAll('tr'));
+
+            // Filter
+            rows.forEach(row => {
+                const description = row.getAttribute('data-description');
+                const category = row.getAttribute('data-category');
+                
+                const matchesSearch = description.includes(searchTerm);
+                const matchesCategory = !selectedCategory || category === selectedCategory;
+
+                row.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
+            });
+
+            // Sort visible rows
+            const visibleRows = rows.filter(row => row.style.display !== 'none');
+            
+            visibleRows.sort((a, b) => {
+                const dateA = new Date(a.getAttribute('data-date'));
+                const dateB = new Date(b.getAttribute('data-date'));
+                const amountA = parseFloat(a.getAttribute('data-amount'));
+                const amountB = parseFloat(b.getAttribute('data-amount'));
+
+                switch(sortOption) {
+                    case 'date-asc':
+                        return dateA - dateB;
+                    case 'date-desc':
+                        return dateB - dateA;
+                    case 'amount-asc':
+                        return amountA - amountB;
+                    case 'amount-desc':
+                        return amountB - amountA;
+                    default:
+                        return dateB - dateA;
+                }
+            });
+
+            // Reorder rows
+            visibleRows.forEach(row => tableBody.appendChild(row));
+        }
+
+        searchInput.addEventListener('input', filterAndSortTable);
+        categoryFilter.addEventListener('change', filterAndSortTable);
+        sortBy.addEventListener('change', filterAndSortTable);
+        
+        resetBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            categoryFilter.value = '';
+            sortBy.value = 'date-desc';
+            filterAndSortTable();
+        });
+    </script>
+}
+
+@functions {
+    string GetCategoryColor(string category)
+    {
+        var colors = new Dictionary<string, string>
+        {
+            { "Food", "#f59e0b" },
+            { "Transport", "#3b82f6" },
+            { "Entertainment", "#ec4899" },
+            { "Shopping", "#8b5cf6" },
+            { "Health", "#10b981" },
+            { "Utilities", "#6366f1" },
+            { "Education", "#14b8a6" },
+            { "Travel", "#06b6d4" },
+            { "Insurance", "#8b5cf6" },
+            { "Other", "#64748b" }
+        };
+
+        if (colors.ContainsKey(category))
+            return colors[category];
+        
+        var hash = category.GetHashCode();
+        var r = (hash & 0xFF0000) >> 16;
+        var g = (hash & 0x00FF00) >> 8;
+        var b = hash & 0x0000FF;
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+}
